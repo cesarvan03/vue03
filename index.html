@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<html>
+
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conexion API con VUE</title>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <form>
+                    <div class="input-field">
+                        <input id="search" v-model="key" @input="Serch" type="search" required>
+                        <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                        <i class="material-icons">close</i>
+                    </div>
+                </form>
+            </div>
+        </nav>
+        <br>
+        <br>
+
+        <div class="col-md-4">
+            <table class="responsive-table striped ">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>id</th>
+                        <th>titulo</th>
+                        <th>estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr v-for="usuario in filtrados">
+                        <td>{{usuario.userId}}</td>
+                        <td>{{usuario.id}}</td>
+                        <td>{{usuario.title}}</td>
+                        <td>{{usuario.completed}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <br>
+    <footer class="page-footer blue darken-3">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">Portafolio Vue.js</h5>
+                    <p class="grey-text text-lighten-4">CSS by Material Design</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Enlaces</h5>
+                    <ul>
+                        <li><a class="grey-text text-lighten-3" href="https://vuejs.cesarvan3.com">Home</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://vuejs.cesarvan3.com/vue01">Conexion
+                                API</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://vuejs.cesarvan3.com/vue02">CRUD con
+                                Arrays</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://vuejs.cesarvan3.com/vue03">Funcionamiento
+                                rutas</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                Creado Por Cesar Ivan Martinez
+                <a class="grey-text text-lighten-4 right" href="https://github.com/cesarvan03/vue01">Codigo en Git</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- vuej-->
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <script>
+        const app = {
+            data() {
+                return {
+                    usuarios: [],
+                    posts: [],
+                    filtrados: [],
+                    key: ""
+                }
+            },
+            methods: {
+                getUsuarios() {
+                    fetch('https://jsonplaceholder.typicode.com/todos')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.usuarios = data;
+                            this.filtrados = this.usuarios;
+                        })
+                },
+                getPost() {
+                    fetch('https://jsonplaceholder.typicode.com/posts')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.posts = data;
+                        })
+                },
+                Serch() {
+                    var response = [];
+                    if (this.key != "") {
+                        for (user of this.usuarios) {
+                            var titulo = user.title;
+                            if (titulo.indexOf(this.key) >= 0) {
+                                response.push(user)
+                            }
+
+                        }
+                        this.filtrados = response;
+                    }
+                    else {
+                        this.getUsuarios();
+
+                    }
+                },
+                getFilter: function () {
+                    if (this.buscar == "") {
+                        this.getUsuarios();
+                    } else {
+                        this.usuarios = this.usuarios.filter(
+                            user => {
+                                return user.completed === this.buscar
+                            }
+                        )
+                    }
+                }
+
+            },
+            mounted() {
+                this.getUsuarios();
+                
+                this.getPost();
+            },
+            computed: {
+                sortedArray: function () {
+                    function compare(a, b) {
+                        if (a.username < b.username)
+                            return -1;
+                        if (a.username > b.username)
+                            return 1;
+                        return 0;
+                    }
+                    return this.usuarios.sort(compare);
+                }
+            }
+
+        }
+        var mountedApp = Vue.createApp(app).mount('#app')
+    </script>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+</body>
+
+</html>
